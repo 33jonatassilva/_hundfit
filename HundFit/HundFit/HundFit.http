@@ -1,0 +1,6 @@
+@HundFit_HostAddress = http://localhost:5279
+
+GET {{HundFit_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
