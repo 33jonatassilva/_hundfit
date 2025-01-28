@@ -6,8 +6,11 @@ public class Training
     public string Name { get; set; }
     public string Description { get; set; }
     public int DurationInMinutes { get; set; }
+    
     public Guid StudentId { get; set; }
     public Guid InstructorId { get; set; }
+    
+    
     public List<Exercise> Exercises { get; set; }
     
     

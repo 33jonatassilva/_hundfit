@@ -24,27 +24,27 @@ public class ExerciseController : ControllerBase
 
 
     [HttpPost("/exercises")]
-    public IActionResult CreateExercise([FromBody] Exercise exercise)
+    public async Task<IActionResult> CreateExerciseAsync([FromBody] Exercise exercise)
     {
-        _repository.CreateExercise(exercise);
+        await _repository.CreateAsync(exercise);
         return Ok(exercise);
     }
     
     
     
     [HttpGet("/exercises")]
-    public IActionResult GetExercises()
+    public async Task<IActionResult> GetExercisesAsync()
     {
-        var result = _repository.GetExercises();
+        var result = await _repository.GetAllAsync();
         return Ok(result);
     }
     
     
     
     [HttpGet("/exercises/{id:guid}")]
-    public IActionResult GetExercisesById(Guid id)
+    public async Task<IActionResult> GetExercisesByIdAsync(Guid id)
     {
-        var exercise = _repository.GetExerciseById(id);
+        var exercise = await _repository.GetByIdAsync(id);
         return Ok(exercise);
     }
     
@@ -68,10 +68,10 @@ public class ExerciseController : ControllerBase
 
 
     [HttpDelete("/exercises/{id:guid}")]
-    public IActionResult DeleteExerciseById(Guid id)
+    public async Task<IActionResult> DeleteExerciseByIdAsync(Guid id)
     {
-        var exercise = _repository.GetExerciseById(id);
-        _repository.DeleteExercise(exercise);
+        var exercise = await _repository.GetByIdAsync(id);
+        await _repository.DeleteAsync(id);
         return Ok(exercise);
     }
     

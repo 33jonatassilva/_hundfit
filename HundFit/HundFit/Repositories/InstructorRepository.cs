@@ -1,6 +1,7 @@
 ﻿using HundFit.Data;
 using HundFit.Models;
 using HundFit.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HundFit.Repositories;
 
@@ -18,38 +19,39 @@ public class InstructorRepository : IInstructorRepository
     
     
     
-    public Instructor CreateInstructor(Instructor instructor)
+    public async Task<Instructor> CreateAsync(Instructor instructor)
     {
-        _context.Instructors.Add(instructor);
-        _context.SaveChanges();
+        await _context.Instructors.AddAsync(instructor);
+        await _context.SaveChangesAsync();
         return instructor;
     }
 
 
-    public List<Instructor> GetInstructors()
+    public async Task<IEnumerable<Instructor>> GetAllAsync()
     {
-        return _context.Instructors.ToList();
+        return await _context.Instructors.ToListAsync();
     }
 
 
-    public Instructor GetInstructorById(Guid id)
+    public async Task<Instructor> GetByIdAsync (Guid id)
     {
-        return _context.Instructors.FirstOrDefault(x => x.Id == id);
+        return await _context.Instructors.FirstOrDefaultAsync(x => x.Id == id);
     }
 
 
-    public Instructor Update(Instructor instructor)
+    public async Task<Instructor> UpdateAsync(Instructor instructor)
     {
         var updatedInstructor = _context.Update(instructor).Entity;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return updatedInstructor;
     }
 
 
-    public Instructor DeleteInstructor(Instructor instructor)
+    public async Task<Instructor> DeleteAsync(Guid id)
     {
-        _context.Remove(instructor);
-        _context.SaveChanges();
+        var instructor = await _context.Instructors.FirstOrDefaultAsync(x => x.Id == id);
+        _context.Remove(id);
+        await _context.SaveChangesAsync();
         return instructor;
     }
 }

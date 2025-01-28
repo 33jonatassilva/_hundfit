@@ -1,6 +1,7 @@
 ﻿using HundFit.Data;
 using HundFit.Models;
 using HundFit.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HundFit.Repositories;
 
@@ -15,39 +16,42 @@ public class ExerciseRepository : IExerciseRepository
     }
     
     
-    public Exercise CreateExercise(Exercise exercise)
+    public async Task<Exercise> CreateAsync(Exercise exercise)
     {
-        _context.Exercises.Add(exercise);
-        _context.SaveChanges();
+        await _context.Exercises.AddAsync(exercise);
+        await _context.SaveChangesAsync();
         return exercise;
     }
 
 
-    public List<Exercise> GetExercises()
+    public async Task<IEnumerable<Exercise>> GetAllAsync()
     {
-        return _context.Exercises.ToList();
+        return await _context.Exercises.ToListAsync();
     }
 
 
-    public Exercise GetExerciseById(Guid id)
+    public async Task<Exercise> GetByIdAsync(Guid id)
     {
-        return _context.Exercises.FirstOrDefault(x => x.Id == id);
+        return await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
     }
 
 
-    public Exercise Update(Exercise exercise)
+    public async Task<Exercise> UpdateAsync(Exercise exercise)
     {
         var updatedExercise = _context.Update(exercise).Entity;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return updatedExercise;
     }
 
 
-    public Exercise DeleteExercise(Exercise exercise)
+    public async Task<Exercise> DeleteAsync(Guid id)
     {
+        var exercise = await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
         _context.Remove(exercise);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return exercise;
     }
+    
+    
     
 }

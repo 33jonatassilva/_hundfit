@@ -1,0 +1,9 @@
+﻿namespace HundFit.Models.Enums;
+
+public enum ESpecialty
+{
+    PersonalTrainer,
+    Bodybuilding,
+    Crossfit,
+    Yoga
+}
