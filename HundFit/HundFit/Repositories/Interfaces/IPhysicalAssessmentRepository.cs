@@ -1,6 +1,6 @@
 ﻿namespace HundFit.Repositories.Interfaces;
 
-public class IPhysicalAssessmentRepository
+public interface IPhysicalAssessmentRepository
 {
     
 }

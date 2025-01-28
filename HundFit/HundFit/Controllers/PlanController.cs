@@ -6,7 +6,7 @@ namespace HundFit.Controllers;
 [ApiController]
 [Route("/plan")]
 
-public class PlanController
+public class PlanController : ControllerBase
 {
     
 }

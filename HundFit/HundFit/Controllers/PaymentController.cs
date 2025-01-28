@@ -6,7 +6,7 @@ namespace HundFit.Controllers;
 [ApiController]
 [Route("/payment")]
 
-public class PaymentController
+public class PaymentController : ControllerBase
 {
     
 }

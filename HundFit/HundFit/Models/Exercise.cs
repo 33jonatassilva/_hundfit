@@ -7,5 +7,8 @@ public class Exercise
     public string Description { get; set; }
     public string Repetitions { get; set; }
     public float Load { get; set; }
-    public Guid TrainingId { get; set; }
+    
+    
+    public List<TrainingExercises> TrainingExercises { get; set; }
+    
 }

@@ -15,6 +15,16 @@ public class AppDbContext : DbContext
     public DbSet<Plan> Plans { get; set; }
     public DbSet<PhysicalAssessment> PhysicalAssessments { get; set; }
     public DbSet<Instructor> Instructors { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+       
+            
+            
+            
+            
+    }
         
         
 }

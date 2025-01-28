@@ -6,7 +6,7 @@ namespace HundFit.Controllers;
 [ApiController]
 [Route("/physical-assessment")]
 
-public class PhysicalAssessment
+public class PhysicalAssessment :ControllerBase
 {
     
 }

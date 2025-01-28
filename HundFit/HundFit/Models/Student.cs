@@ -11,7 +11,11 @@ public class Student
     public string Address { get; set; }
     public float Weight { get; set; }
     public float Height { get; set; }
-    public Guid PlanId { get; set; }
     public DateTime StartDate { get; set; }
+    public Guid PlanId { get; set; }
+    
     public Guid TrainingId { get; set; }
+
+    
+    public Plan Plan { get; set; }
 }

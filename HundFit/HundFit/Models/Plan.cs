@@ -7,5 +7,6 @@ public class Plan
     public string Name { get; set; }
     public float Price { get; set; }
     public int DurationInMonths { get; set; }
+    
     public List<Student> Students { get; set; }
 }

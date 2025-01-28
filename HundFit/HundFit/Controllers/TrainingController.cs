@@ -6,7 +6,7 @@ namespace HundFit.Controllers;
 [ApiController]
 [Route("/training")]
 
-public class TrainingController
+public class TrainingController :ControllerBase
 {
     
 }

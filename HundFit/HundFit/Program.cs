@@ -8,6 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped(IExerciseRepository, ExerciseRepository);
+builder.Services.AddScoped(IPaymentRepository, PaymentRepository);
+builder.Services.AddScoped(IPhysicalAssessmentRepository, PhysicalAssessmentRepository);
+builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
+builder.Services.AddScoped(IStudentRepository, StudentRepository);
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,14 +28,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
-app.MapGet("/swagger", () =>
-    {
-    
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
