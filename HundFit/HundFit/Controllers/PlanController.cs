@@ -2,6 +2,7 @@
 using HundFit.Repositories;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HundFit.Controllers;
 
@@ -28,10 +29,17 @@ public class PlanController : ControllerBase
             await _repository.CreateAsync(plan);
             return Ok(plan);
         }
-    
-    
-    
-        [HttpGet("/plan")]
+
+
+
+        [HttpGet("/plan/")]
+        public async Task<IActionResult> GetPlanAsync([FromQuery] Guid? id)
+        {
+            return id.HasValue ? Ok(await _repository.GetByIdAsync(id.Value)) : Ok(await _repository.GetAllAsync());
+        }
+        
+        
+        [SwaggerIgnore]
         public async Task<IActionResult> GetPlansAsync()
         {
             var result = await _repository.GetAllAsync();
@@ -40,7 +48,7 @@ public class PlanController : ControllerBase
     
     
     
-        [HttpGet("/plan/{id:guid}")]
+        [SwaggerIgnore]
         public async Task<IActionResult> GetPlansByIdAsync(Guid id)
         {
             var plan = await _repository.GetByIdAsync(id);

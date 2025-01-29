@@ -1,6 +1,7 @@
 ﻿using HundFit.Models;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HundFit.Controllers;
 
@@ -26,10 +27,19 @@ public class PhysicalAssessmentController : ControllerBase
             await _repository.CreateAsync(physicalAssessment);
             return Ok(physicalAssessment);
         }
-    
-    
-    
-        [HttpGet("/physical-assessment")]
+
+
+
+        [HttpGet("/physical-assessment/")]
+
+
+        public async Task<IActionResult> GetPhysicalAssessmentAsync([FromQuery] Guid? id)
+        {
+           return id.HasValue ? Ok(await _repository.GetByIdAsync(id.Value)) : Ok(await _repository.GetAllAsync());
+        }
+        
+        
+        [SwaggerIgnore]
         public async Task<IActionResult> GetPhysicalAssessments()
         {
             var result = await _repository.GetAllAsync();
@@ -38,7 +48,7 @@ public class PhysicalAssessmentController : ControllerBase
     
     
     
-        [HttpGet("/physical-assessment/{id:guid}")]
+        [SwaggerIgnore]
         public async Task<IActionResult> GetPhysicalAssessmentsByIdAsync(Guid id)
         {
             var physicalAssessment = await _repository.GetByIdAsync(id);

@@ -10,7 +10,6 @@ builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
-//builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPhysicalAssessmentRepository, PhysicalAssessmentRepository>();
 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();

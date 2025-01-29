@@ -1,6 +1,7 @@
 ﻿using HundFit.Models;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HundFit.Controllers;
 
@@ -26,10 +27,18 @@ public class StudentController :ControllerBase
         await _repository.CreateAsync(student);
         return Ok(student);
     }
+
+
+
+    [HttpGet("/student/")]
+    public async Task<IActionResult> GetStudentsAsync([FromQuery] Guid? id)
+    {
+        return id.HasValue ? Ok(await _repository.GetByIdAsync(id.Value)) : Ok(await _repository.GetAllAsync());
+    }
     
     
     
-    [HttpGet("/student")]
+    [SwaggerIgnore]
     public async Task<IActionResult> GetStudentsAsync()
     {
         var students = await _repository.GetAllAsync();
@@ -38,7 +47,7 @@ public class StudentController :ControllerBase
     
     
     
-    [HttpGet("/student/{id:guid}")]
+    [SwaggerIgnore]
     public async Task<IActionResult> GetStudentsByIdAsync(Guid id)
     {
         var student = await _repository.GetByIdAsync(id);
