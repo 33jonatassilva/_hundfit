@@ -55,24 +55,25 @@ public class InstructorController : ControllerBase
     
 
 
-    /*[HttpPut("/Instructors/{id:guid}")]
-    public IActionResult UpdateInstructor(Guid id, [FromBody] Instructor Instructor)
+    [HttpPut("/Instructors/{id:guid}")]
+    public async Task<IActionResult> UpdateInstructorAsync(Guid id, [FromBody] Instructor instructor)
     {
-        var InstructorToUpdate = _repository.GetInstructorById(id);
+        var instructorToUpdate = await _repository.GetByIdAsync(id);
 
-        InstructorToUpdate.Name = Instructor.Name;
-        InstructorToUpdate.Description = Instructor.Description;
-        InstructorToUpdate.TrainingId = Instructor.TrainingId;
-        InstructorToUpdate.Load = Instructor.Load;
-        InstructorToUpdate.Repetitions = Instructor.Repetitions;
+        instructorToUpdate.Id = instructor.Id;
+        instructorToUpdate.FirstName = instructor.FirstName;
+        instructorToUpdate.LastName = instructor.LastName;
+        instructorToUpdate.Email = instructor.Email;
+        instructorToUpdate.PhoneNumber = instructor.PhoneNumber;
+        instructorToUpdate.SpecialtyEnum = instructor.SpecialtyEnum;
 
-        _repository.Update(InstructorToUpdate);
-        return Ok(InstructorToUpdate);
-    }*/
+        await _repository.UpdateAsync(instructorToUpdate);
+        return Ok(instructorToUpdate);
+    }
 
 
 
-    [HttpDelete("/Instructors/{id:guid}")]
+    [HttpDelete("/instructors/{id:guid}")]
     public IActionResult DeleteInstructorByIdAsync(Guid id)
     {
         var instructor = _repository.GetByIdAsync(id);
