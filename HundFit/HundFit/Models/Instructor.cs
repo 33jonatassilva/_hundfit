@@ -7,27 +7,22 @@ public class Instructor
 {
     [Key]
     public Guid Id { get; set; }
-    
-    [Required]
-    [MaxLength(50)]
+
+    [Required, MaxLength(50)]
     public string FirstName { get; set; }
-    
-    [Required]
-    [MaxLength(50)]
+
+    [Required, MaxLength(50)]
     public string LastName { get; set; }
-    
-    [Required]
-    [MaxLength(255)]
+
+    [Required, MaxLength(255)]
     public string Email { get; set; }
-    
-    [Required]
-    [MaxLength(50)]
+
+    [Required, MaxLength(50)]
     public string PhoneNumber { get; set; }
-    
+
     [Required]
     public ESpecialty SpecialtyEnum { get; set; }
-    
-    
-    public List<Training> Trainings { get; set; } 
-    
+
+    // Relacionamento com Training (um-para-muitos)
+    public List<Training> Trainings { get; set; } = new();
 }

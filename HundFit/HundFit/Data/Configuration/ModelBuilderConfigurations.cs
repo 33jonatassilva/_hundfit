@@ -7,86 +7,47 @@ public static class ModelBuilderConfigurations
 {
     public static void Configure(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Exercise>()
-            .HasKey(e => e.Id);
-
-        modelBuilder.Entity<Exercise>()
-            .HasMany(e => e.TrainingExercises)
-            .WithOne(te => te.Exercise)
-            .HasForeignKey(te => te.ExerciseId);
-
-        
-        modelBuilder.Entity<Instructor>()
-            .HasKey(i => i.Id);
-
-        modelBuilder.Entity<Instructor>()
-            .HasMany(i => i.Trainings)
-            .WithOne(t => t.Instructor)
-            .HasForeignKey(t => t.InstructorId);
-
-        
-        modelBuilder.Entity<PhysicalAssessment>()
-            .HasKey(pa => pa.Id);
-
-        modelBuilder.Entity<PhysicalAssessment>()
-            .HasOne(pa => pa.Student)
-            .WithMany()
-            .HasForeignKey(pa => pa.StudentId);
-
-        modelBuilder.Entity<PhysicalAssessment>()
-            .HasOne(pa => pa.Instructor)
-            .WithMany()
-            .HasForeignKey(pa => pa.InstructorId);
-
-        
-        modelBuilder.Entity<Plan>()
-            .HasKey(p => p.Id);
-
-        modelBuilder.Entity<Plan>()
-            .HasMany(p => p.Students)
-            .WithOne(s => s.Plan)
-            .HasForeignKey(s => s.PlanId);
-
-        
-        modelBuilder.Entity<Student>()
-            .HasKey(s => s.Id);
-
-        modelBuilder.Entity<Student>()
-            .HasOne(s => s.Plan)
-            .WithMany(p => p.Students)
-            .HasForeignKey(s => s.PlanId);
-
-        modelBuilder.Entity<Student>()
-            .HasOne(s => s.Training)
-            .WithMany()
-            .HasForeignKey(s => s.TrainingId);
-
-        
-        modelBuilder.Entity<Training>()
-            .HasKey(t => t.Id);
-
-        modelBuilder.Entity<Training>()
-            .HasOne(t => t.Instructor)
-            .WithMany(i => i.Trainings)
-            .HasForeignKey(t => t.InstructorId);
-
-        modelBuilder.Entity<Training>()
-            .HasMany(t => t.Exercises)
-            .WithOne()
-            .HasForeignKey(e => e.TrainingId);
-
-        
+// Configuração para TrainingExercises (muitos-para-muitos entre Training e Exercise)
         modelBuilder.Entity<TrainingExercises>()
-            .HasKey(te => new { te.TrainingId, te.ExerciseId });
+            .HasKey(te => new { te.TrainingId, te.ExerciseId }); // Chave composta
 
         modelBuilder.Entity<TrainingExercises>()
             .HasOne(te => te.Training)
-            .WithMany()
-            .HasForeignKey(te => te.TrainingId);
+            .WithMany(t => t.TrainingExercises)
+            .HasForeignKey(te => te.TrainingId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TrainingExercises>()
             .HasOne(te => te.Exercise)
             .WithMany(e => e.TrainingExercises)
-            .HasForeignKey(te => te.ExerciseId);
+            .HasForeignKey(te => te.ExerciseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            // Configuração para Training e Student (um-para-um opcional)
+            modelBuilder.Entity<Training>()
+                .HasOne(t => t.Student)
+                .WithOne(s => s.Training)
+                .HasForeignKey<Student>(s => s.TrainingId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Configuração para Student e Plan (um-para-muitos)
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.Plan)
+                .WithMany(p => p.Students)
+                .HasForeignKey(s => s.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuração para PhysicalAssessment (avaliação física com instrutor e aluno)
+            modelBuilder.Entity<PhysicalAssessment>()
+                .HasOne(pa => pa.Student)
+                .WithMany()
+                .HasForeignKey(pa => pa.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PhysicalAssessment>()
+                .HasOne(pa => pa.Instructor)
+                .WithMany()
+                .HasForeignKey(pa => pa.InstructorId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }

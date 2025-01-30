@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HundFit.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250129203018_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250130021349_one")]
+    partial class one
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,17 +50,7 @@ namespace HundFit.Migrations
                     b.Property<int>("Series")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TrainingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TrainingId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TrainingId");
-
-                    b.HasIndex("TrainingId1");
 
                     b.ToTable("Exercises");
                 });
@@ -197,7 +187,7 @@ namespace HundFit.Migrations
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("TrainingId")
+                    b.Property<Guid?>("TrainingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<float>("Weight")
@@ -207,7 +197,9 @@ namespace HundFit.Migrations
 
                     b.HasIndex("PlanId");
 
-                    b.HasIndex("TrainingId");
+                    b.HasIndex("TrainingId")
+                        .IsUnique()
+                        .HasFilter("[TrainingId] IS NOT NULL");
 
                     b.ToTable("Students");
                 });
@@ -234,7 +226,7 @@ namespace HundFit.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("StudentId")
+                    b.Property<Guid?>("StudentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -246,34 +238,28 @@ namespace HundFit.Migrations
 
             modelBuilder.Entity("HundFit.Models.TrainingExercises", b =>
                 {
-                    b.Property<Guid>("TrainingId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ExerciseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("TrainingId", "ExerciseId");
+                    b.Property<Guid?>("ExerciseId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ExerciseId");
 
+                    b.HasIndex("ExerciseId1");
+
+                    b.HasIndex("TrainingId");
+
                     b.ToTable("TrainingExercises");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Exercise", b =>
-                {
-                    b.HasOne("HundFit.Models.Training", null)
-                        .WithMany("Exercises")
-                        .HasForeignKey("TrainingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HundFit.Models.Training", "Training")
-                        .WithMany()
-                        .HasForeignKey("TrainingId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Training");
                 });
 
             modelBuilder.Entity("HundFit.Models.PhysicalAssessment", b =>
@@ -281,7 +267,7 @@ namespace HundFit.Migrations
                     b.HasOne("HundFit.Models.Instructor", "Instructor")
                         .WithMany()
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HundFit.Models.Student", "Student")
@@ -300,14 +286,13 @@ namespace HundFit.Migrations
                     b.HasOne("HundFit.Models.Plan", "Plan")
                         .WithMany("Students")
                         .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HundFit.Models.Training", "Training")
-                        .WithMany()
-                        .HasForeignKey("TrainingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithOne("Student")
+                        .HasForeignKey("HundFit.Models.Student", "TrainingId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Plan");
 
@@ -319,7 +304,7 @@ namespace HundFit.Migrations
                     b.HasOne("HundFit.Models.Instructor", "Instructor")
                         .WithMany("Trainings")
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Instructor");
@@ -328,13 +313,17 @@ namespace HundFit.Migrations
             modelBuilder.Entity("HundFit.Models.TrainingExercises", b =>
                 {
                     b.HasOne("HundFit.Models.Exercise", "Exercise")
-                        .WithMany("TrainingExercises")
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HundFit.Models.Exercise", null)
+                        .WithMany("TrainingExercises")
+                        .HasForeignKey("ExerciseId1");
+
                     b.HasOne("HundFit.Models.Training", "Training")
-                        .WithMany()
+                        .WithMany("TrainingExercises")
                         .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -361,7 +350,10 @@ namespace HundFit.Migrations
 
             modelBuilder.Entity("HundFit.Models.Training", b =>
                 {
-                    b.Navigation("Exercises");
+                    b.Navigation("Student")
+                        .IsRequired();
+
+                    b.Navigation("TrainingExercises");
                 });
 #pragma warning restore 612, 618
         }

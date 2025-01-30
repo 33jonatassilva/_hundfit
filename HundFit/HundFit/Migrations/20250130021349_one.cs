@@ -6,11 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HundFit.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class one : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Exercises",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: false),
+                    Series = table.Column<int>(type: "int", nullable: false),
+                    RepetitionsPerSeries = table.Column<int>(type: "int", nullable: false),
+                    Load = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exercises", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Instructors",
                 columns: table => new
@@ -49,7 +65,7 @@ namespace HundFit.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: false),
                     DurationInMinutes = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -60,37 +76,7 @@ namespace HundFit.Migrations
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Exercises",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: false),
-                    Series = table.Column<int>(type: "int", nullable: false),
-                    RepetitionsPerSeries = table.Column<int>(type: "int", nullable: false),
-                    Load = table.Column<float>(type: "real", nullable: false),
-                    TrainingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TrainingId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Exercises", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Exercises_Trainings_TrainingId",
-                        column: x => x.TrainingId,
-                        principalTable: "Trainings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Exercises_Trainings_TrainingId1",
-                        column: x => x.TrainingId1,
-                        principalTable: "Trainings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,7 +94,7 @@ namespace HundFit.Migrations
                     Height = table.Column<float>(type: "real", nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TrainingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TrainingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -118,31 +104,38 @@ namespace HundFit.Migrations
                         column: x => x.PlanId,
                         principalTable: "Plans",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Students_Trainings_TrainingId",
                         column: x => x.TrainingId,
                         principalTable: "Trainings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TrainingExercises",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TrainingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExerciseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ExerciseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExerciseId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TrainingExercises", x => new { x.TrainingId, x.ExerciseId });
+                    table.PrimaryKey("PK_TrainingExercises", x => x.Id);
                     table.ForeignKey(
                         name: "FK_TrainingExercises_Exercises_ExerciseId",
                         column: x => x.ExerciseId,
                         principalTable: "Exercises",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TrainingExercises_Exercises_ExerciseId1",
+                        column: x => x.ExerciseId1,
+                        principalTable: "Exercises",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TrainingExercises_Trainings_TrainingId",
                         column: x => x.TrainingId,
@@ -171,7 +164,7 @@ namespace HundFit.Migrations
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PhysicalAssessments_Students_StudentId",
                         column: x => x.StudentId,
@@ -179,16 +172,6 @@ namespace HundFit.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Exercises_TrainingId",
-                table: "Exercises",
-                column: "TrainingId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Exercises_TrainingId1",
-                table: "Exercises",
-                column: "TrainingId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PhysicalAssessments_InstructorId",
@@ -208,12 +191,24 @@ namespace HundFit.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Students_TrainingId",
                 table: "Students",
-                column: "TrainingId");
+                column: "TrainingId",
+                unique: true,
+                filter: "[TrainingId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingExercises_ExerciseId",
                 table: "TrainingExercises",
                 column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingExercises_ExerciseId1",
+                table: "TrainingExercises",
+                column: "ExerciseId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingExercises_TrainingId",
+                table: "TrainingExercises",
+                column: "TrainingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trainings_InstructorId",
