@@ -45,8 +45,8 @@ public class StudentController :ControllerBase
         return Ok(student);
     }
 
-    /*[HttpPost("/student/plan/{planId:guid}")]
-    public async Task<IActionResult> AddStudentToPlanAsync([FromQuery] Guid? id, [FromRoute] Guid planId, [FromBody] Student? studentToAdd)
+    [HttpPost("/student/plan/{planId:guid}")]
+    public async Task<IActionResult> AddStudentToPlanAsync([FromQuery] Guid? id, [FromRoute] Guid planId, [FromBody] StudentDTO? studentDto)
     {
         
         if (id.HasValue)
@@ -57,13 +57,26 @@ public class StudentController :ControllerBase
             await _repository.UpdateAsync(student);
             return Ok(student);
         }
+
+        var studentTwo = new Student
+        {
+            Id = Guid.NewGuid(),
+            PlanId = planId,
+            InstructorId = studentDto.InstructorId,
+            TrainingId = studentDto.TrainingId,
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName,
+            BirthDate = studentDto.BirthDate,
+            Email = studentDto.Email,
+            PhoneNumber = studentDto.PhoneNumber,
+            Address = studentDto.Address,
+            RegistrationDate = studentDto.RegistrationDate
+        };
         
-        studentToAdd.PlanId = planId;
-        studentToAdd.Plan.Students.Add(studentToAdd);
-        await _repository.UpdateAsync(studentToAdd);
-        return Ok(studentToAdd);
-        
-    }*/
+        await _repository.CreateAsync(studentTwo);
+        return Ok(studentTwo);
+
+    }
 
 
 

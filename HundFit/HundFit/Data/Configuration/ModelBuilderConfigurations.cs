@@ -7,48 +7,42 @@ public static class ModelBuilderConfigurations
 {
     public static void Configure(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TrainingExercises>()
-            .HasKey(te => new { te.TrainingId, te.ExerciseId });
+       
+        // Relacionamento um para muitos - Instrutor pode ter vários alunos
+        modelBuilder.Entity<Student>()
+            .HasOne(s => s.Instructor)
+            .WithMany(i => i.Students)
+            .HasForeignKey(s => s.InstructorId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-        modelBuilder.Entity<TrainingExercises>()
-            .HasOne(te => te.Training)
-            .WithMany()
-            .HasForeignKey(te => te.TrainingId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<TrainingExercises>()
-            .HasOne(te => te.Exercise)
-            .WithMany()
-            .HasForeignKey(te => te.ExerciseId)
-            .OnDelete(DeleteBehavior.Cascade);
-    
+        // Relacionamento um para muitos - Plano pode ter vários alunos
         modelBuilder.Entity<Student>()
             .HasOne(s => s.Plan)
-            .WithMany()
+            .WithMany(p => p.Students)
             .HasForeignKey(s => s.PlanId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        /*modelBuilder.Entity<Student>()
-            .HasOne(s => s.Training)
-            .WithMany()
-            .HasForeignKey(s => s.TrainingId)
-            .OnDelete(DeleteBehavior.SetNull);*/
-        
-        /*modelBuilder.Entity<Student>()
-            .HasOne(s => s.Training)
-            .WithOne(t => t.Instructor)
-            .HasForeignKey<Training>(t => t.StudentId)
-            .OnDelete(DeleteBehavior.NoAction);*/
-
+        // Relacionamento um para muitos - Treino pode ter vários alunos
         modelBuilder.Entity<Student>()
-            .HasOne(s => s.Instructor)
-            .WithMany()
-            .HasForeignKey(s => s.InstructorId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(s => s.Training)
+            .WithMany(t => t.Students)
+            .HasForeignKey(s => s.TrainingId)
+            .OnDelete(DeleteBehavior.SetNull);
 
+        // Relacionamento muitos para muitos - Treinos podem ter vários exercícios
+        modelBuilder.Entity<Training>()
+            .HasMany(t => t.Exercises)
+            .WithMany(e => e.Training)
+            .UsingEntity<Dictionary<string, object>>(
+                "TrainingExercise",
+                j => j.HasOne<Exercise>().WithMany().HasForeignKey("ExerciseId"),
+                j => j.HasOne<Training>().WithMany().HasForeignKey("TrainingId"),
+                j => j.HasKey("TrainingId", "ExerciseId"));
+
+        // Relacionamento um para muitos - Estatísticas de alunos
         modelBuilder.Entity<StudentStats>()
             .HasOne(ss => ss.Student)
-            .WithMany()
+            .WithMany(s => s.StudentStats)
             .HasForeignKey(ss => ss.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 

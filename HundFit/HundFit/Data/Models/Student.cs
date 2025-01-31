@@ -26,6 +26,9 @@ public class Student
     public string PhoneNumber { get; set; }
     public string Address { get; set; }
     public DateTime RegistrationDate { get; set; }
+    
+    
+    public virtual ICollection<StudentStats> StudentStats { get; set; }
 
     
 }

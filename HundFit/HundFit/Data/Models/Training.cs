@@ -9,11 +9,6 @@ public class Training
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
-    
-    
-    
-    /*public Guid? StudentId { get; set; } 
-    public Student Student { get; set; }*/
     public Guid? InstructorId { get; set; }
     public Instructor Instructor { get; set; }
 
@@ -28,4 +23,5 @@ public class Training
     
     
     public virtual ICollection<Exercise> Exercises { get; set; }
+    public virtual ICollection<Student> Students { get; set; }
 }

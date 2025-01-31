@@ -16,5 +16,8 @@ public class Plan
     public float Price { get; set; }
     [Required] 
     public int DurationInMonths { get; set; }
+    
+    
+    public virtual ICollection<Student> Students { get; set; }
 
 }

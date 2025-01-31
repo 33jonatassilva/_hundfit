@@ -1,4 +1,5 @@
 ﻿using HundFit.Data.Models;
+using HundFit.ModelsDTOs;
 using HundFit.Repositories;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -57,20 +58,18 @@ public class PlanController : ControllerBase
     
 
 
-        /*[HttpPut("/Plans/{id:guid}")]
-        public IActionResult UpdatePlan(Guid id, [FromBody] Plan Plan)
+        [HttpPut("/Plans/{id:guid}")]
+        public async Task<IActionResult> UpdatePlan(Guid id, [FromBody] PlanDTO planDto)
         {
-            var PlanToUpdate = _repository.GetPlanById(id);
+            var plan = await _repository.GetByIdAsync(id);
 
-            PlanToUpdate.Name = Plan.Name;
-            PlanToUpdate.Description = Plan.Description;
-            PlanToUpdate.TrainingId = Plan.TrainingId;
-            PlanToUpdate.Load = Plan.Load;
-            PlanToUpdate.Repetitions = Plan.Repetitions;
-
-            _repository.Update(PlanToUpdate);
-            return Ok(PlanToUpdate);
-        }*/
+            plan.Name = planDto.Name;
+            plan.Price = planDto.Price;
+            plan.DurationInMonths = planDto.DurationInMonths;
+           
+            await _repository.UpdateAsync(plan);
+            return Ok(plan);
+        }
 
 
 

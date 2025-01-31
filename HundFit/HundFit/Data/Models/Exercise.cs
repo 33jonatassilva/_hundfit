@@ -20,6 +20,7 @@ public class Exercise
     public int RepetitionsPerSeries { get; set; }
     public float Load { get; set; }
     
-    public virtual ICollection<Training> Training { get; set; } 
+    
+    public virtual ICollection<Training> Training { get; set; }
 
 }

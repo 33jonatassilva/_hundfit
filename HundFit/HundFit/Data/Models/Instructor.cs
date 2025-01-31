@@ -23,4 +23,7 @@ public class Instructor
 
     [Required]
     public ESpecialty SpecialtyEnum { get; set; }
+    
+    
+    public virtual ICollection<Student> Students { get; set; }
 }
