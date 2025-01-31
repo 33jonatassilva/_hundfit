@@ -1,4 +1,4 @@
-﻿using HundFit.Models;
+﻿using HundFit.Data.Models;
 
 namespace HundFit.Repositories.Interfaces;
 

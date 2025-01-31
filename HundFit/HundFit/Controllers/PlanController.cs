@@ -1,4 +1,4 @@
-﻿using HundFit.Models;
+﻿using HundFit.Data.Models;
 using HundFit.Repositories;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;

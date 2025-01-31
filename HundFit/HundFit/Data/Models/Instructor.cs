@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using HundFit.Models.Enums;
+using HundFit.Data.Models.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 
-namespace HundFit.Models;
+namespace HundFit.Data.Models;
 
 public class Instructor
 {
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required, MaxLength(50)]
     public string FirstName { get; set; }
@@ -22,7 +23,4 @@ public class Instructor
 
     [Required]
     public ESpecialty SpecialtyEnum { get; set; }
-
-    // Relacionamento com Training (um-para-muitos)
-    public List<Training> Trainings { get; set; } = new();
 }

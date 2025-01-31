@@ -1,4 +1,5 @@
-﻿using HundFit.Models;
+﻿using HundFit.Data.Models;
+using HundFit.ModelsDTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,8 +22,20 @@ public class TrainingController :ControllerBase
         
         
     [HttpPost("/training/")]
-    public async Task<IActionResult> CreateTrainingAsync([FromBody] Training training)
+    public async Task<IActionResult> CreateTrainingAsync([FromBody] TrainingDTO trainingDto)
     {
+
+
+        var training = new Training
+        {
+            InstructorId = trainingDto.InstructorId,
+            Name = trainingDto.Name,
+            Description = trainingDto.Description,
+            DurationInMinutes = trainingDto.DurationInMinutes
+
+        };
+        
+        
         await _repository.CreateAsync(training);
         return Ok(training);
     }
@@ -55,20 +68,20 @@ public class TrainingController :ControllerBase
     
 
 
-    /*[HttpPut("/trainings/{id:guid}")]
-    public IActionResult Updatetraining(Guid id, [FromBody] training training)
+    [HttpPut("/trainings/{id:guid}")]
+    public async Task<IActionResult> UpdateTrainingAsync(Guid id, [FromBody] TrainingDTO trainingDto)
     {
-        var trainingToUpdate = _repository.GettrainingById(id);
-
-        trainingToUpdate.Name = training.Name;
-        trainingToUpdate.Description = training.Description;
-        trainingToUpdate.TrainingId = training.TrainingId;
-        trainingToUpdate.Load = training.Load;
-        trainingToUpdate.Repetitions = training.Repetitions;
-
-        _repository.Update(trainingToUpdate);
-        return Ok(trainingToUpdate);
-    }*/
+        var training = await _repository.GetByIdAsync(id);
+        
+        training.InstructorId = trainingDto.InstructorId;
+        training.Name = trainingDto.Name;
+        training.Description = trainingDto.Description;
+        training.DurationInMinutes = trainingDto.DurationInMinutes;
+        
+        
+        await _repository.UpdateAsync(training);
+        return Ok(training);
+    }
 
 
 

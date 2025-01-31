@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace HundFit.Models;
+﻿namespace HundFit.ModelsDTOs;
 
 public class ExerciseDTO
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public int Series { get; set; }

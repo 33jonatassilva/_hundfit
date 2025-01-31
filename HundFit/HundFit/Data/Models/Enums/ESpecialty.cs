@@ -1,4 +1,4 @@
-﻿namespace HundFit.Models.Enums;
+﻿namespace HundFit.Data.Models.Enums;
 
 public enum ESpecialty
 {

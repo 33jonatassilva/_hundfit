@@ -1,5 +1,5 @@
 ﻿using HundFit.Data;
-using HundFit.Models;
+using HundFit.Data.Models;
 using HundFit.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

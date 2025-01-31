@@ -1,4 +1,5 @@
-﻿using HundFit.Models;
+﻿using HundFit.Data.Models;
+using HundFit.ModelsDTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,20 @@ public class ExerciseController : ControllerBase
 
 
     [HttpPost("/exercises")]
-    public async Task<IActionResult> CreateExerciseAsync([FromBody] Exercise exercise)
+    public async Task<IActionResult> CreateExerciseAsync([FromBody] ExerciseDTO exerciseDto)
     {
+        var exercise = new Exercise
+        {
+            Id = Guid.NewGuid(),
+            Name = exerciseDto.Name,
+            Description = exerciseDto.Description,
+            Series = exerciseDto.Series,
+            RepetitionsPerSeries = exerciseDto.RepetitionsPerSeries,
+            Load = exerciseDto.Load
+        };
+        
         await _repository.CreateAsync(exercise);
-        return Ok(exercise);
+        return Ok(exerciseDto);
     }
 
 
@@ -57,20 +68,20 @@ public class ExerciseController : ControllerBase
     
 
 
-    /*[HttpPut("/exercises/{id:guid}")]
-    public IActionResult UpdateExercise(Guid id, [FromBody] Exercise exercise)
+    [HttpPut("/exercises/{id:guid}")]
+    public async Task<IActionResult> UpdateExercise(Guid id, [FromBody] ExerciseDTO exerciseDto)
     {
-        var exerciseToUpdate = _repository.GetExerciseById(id);
+        var exercise = await _repository.GetByIdAsync(id);
         
-        exerciseToUpdate.Name = exercise.Name;
-        exerciseToUpdate.Description = exercise.Description;
-        exerciseToUpdate.TrainingId = exercise.TrainingId;
-        exerciseToUpdate.Load = exercise.Load;
-        exerciseToUpdate.Repetitions = exercise.Repetitions;
+        exercise.Name = exerciseDto.Name;
+        exercise.Description = exerciseDto.Description;
+        exercise.Series = exerciseDto.Series;
+        exercise.Load = exerciseDto.Load;
         
-        _repository.Update(exerciseToUpdate);
-        return Ok(exerciseToUpdate);
-    }*/
+        
+        await _repository.UpdateAsync(exercise);
+        return Ok(exercise);
+    }
 
 
 

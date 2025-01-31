@@ -1,5 +1,6 @@
-﻿using HundFit.Models;
+﻿using HundFit.Data.Models;
 using HundFit.Repositories.Interfaces;
+using HundFit.ModelsDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -22,11 +23,47 @@ public class StudentController :ControllerBase
         
         
     [HttpPost("/student")]
-    public async Task<IActionResult> CreateStudentAsync([FromBody] Student student)
+    public async Task<IActionResult> CreateStudentAsync([FromBody] StudentDTO studentDto)
     {
+
+        var student = new Student
+        {
+            Id = Guid.NewGuid(),
+            PlanId = studentDto.PlanId,
+            InstructorId = studentDto.InstructorId,
+            TrainingId = studentDto.TrainingId,
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName,
+            BirthDate = studentDto.BirthDate,
+            Email = studentDto.Email,
+            PhoneNumber = studentDto.PhoneNumber,
+            Address = studentDto.Address,
+            RegistrationDate = studentDto.RegistrationDate,
+        };
+        
         await _repository.CreateAsync(student);
         return Ok(student);
     }
+
+    /*[HttpPost("/student/plan/{planId:guid}")]
+    public async Task<IActionResult> AddStudentToPlanAsync([FromQuery] Guid? id, [FromRoute] Guid planId, [FromBody] Student? studentToAdd)
+    {
+        
+        if (id.HasValue)
+        {
+            var student = await _repository.GetByIdAsync(id.Value);
+            student.PlanId = planId;
+            student.Plan.Students.Add(student);
+            await _repository.UpdateAsync(student);
+            return Ok(student);
+        }
+        
+        studentToAdd.PlanId = planId;
+        studentToAdd.Plan.Students.Add(studentToAdd);
+        await _repository.UpdateAsync(studentToAdd);
+        return Ok(studentToAdd);
+        
+    }*/
 
 
 

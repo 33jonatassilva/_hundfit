@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HundFit.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250130023330_two")]
-    partial class two
+    [Migration("20250131165357_One")]
+    partial class One
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace HundFit.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HundFit.Models.Exercise", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Exercise", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace HundFit.Migrations
                     b.ToTable("Exercises");
                 });
 
-            modelBuilder.Entity("HundFit.Models.Instructor", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Instructor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,13 +89,87 @@ namespace HundFit.Migrations
                     b.ToTable("Instructors");
                 });
 
-            modelBuilder.Entity("HundFit.Models.PhysicalAssessment", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Plan", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("ActualWeight")
+                    b.Property<int>("DurationInMonths")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("HundFit.Data.Models.Student", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("InstructorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("TrainingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstructorId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("TrainingId");
+
+                    b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("HundFit.Data.Models.StudentStats", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("CurrentWeight")
                         .HasColumnType("real");
 
                     b.Property<float>("FatBody")
@@ -119,92 +193,10 @@ namespace HundFit.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("PhysicalAssessments");
+                    b.ToTable("StudentStats");
                 });
 
-            modelBuilder.Entity("HundFit.Models.Plan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("DurationInMonths")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Plans");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Student", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<float>("Height")
-                        .HasColumnType("real");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("TrainingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Weight")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlanId");
-
-                    b.HasIndex("TrainingId")
-                        .IsUnique()
-                        .HasFilter("[TrainingId] IS NOT NULL");
-
-                    b.ToTable("Students");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Training", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Training", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,16 +210,13 @@ namespace HundFit.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid?>("InstructorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid?>("StudentId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -236,7 +225,7 @@ namespace HundFit.Migrations
                     b.ToTable("Trainings");
                 });
 
-            modelBuilder.Entity("HundFit.Models.TrainingExercises", b =>
+            modelBuilder.Entity("HundFit.Data.Models.TrainingExercises", b =>
                 {
                     b.Property<Guid>("TrainingId")
                         .HasColumnType("uniqueidentifier");
@@ -254,15 +243,38 @@ namespace HundFit.Migrations
                     b.ToTable("TrainingExercises");
                 });
 
-            modelBuilder.Entity("HundFit.Models.PhysicalAssessment", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Student", b =>
                 {
-                    b.HasOne("HundFit.Models.Instructor", "Instructor")
+                    b.HasOne("HundFit.Data.Models.Instructor", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HundFit.Data.Models.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("HundFit.Data.Models.Training", "Training")
+                        .WithMany()
+                        .HasForeignKey("TrainingId");
+
+                    b.Navigation("Instructor");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Training");
+                });
+
+            modelBuilder.Entity("HundFit.Data.Models.StudentStats", b =>
+                {
+                    b.HasOne("HundFit.Data.Models.Instructor", "Instructor")
                         .WithMany()
                         .HasForeignKey("InstructorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("HundFit.Models.Student", "Student")
+                    b.HasOne("HundFit.Data.Models.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -273,45 +285,25 @@ namespace HundFit.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("HundFit.Models.Student", b =>
+            modelBuilder.Entity("HundFit.Data.Models.Training", b =>
                 {
-                    b.HasOne("HundFit.Models.Plan", "Plan")
-                        .WithMany("Students")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("HundFit.Models.Training", "Training")
-                        .WithOne("Student")
-                        .HasForeignKey("HundFit.Models.Student", "TrainingId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Plan");
-
-                    b.Navigation("Training");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Training", b =>
-                {
-                    b.HasOne("HundFit.Models.Instructor", "Instructor")
-                        .WithMany("Trainings")
-                        .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("HundFit.Data.Models.Instructor", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId");
 
                     b.Navigation("Instructor");
                 });
 
-            modelBuilder.Entity("HundFit.Models.TrainingExercises", b =>
+            modelBuilder.Entity("HundFit.Data.Models.TrainingExercises", b =>
                 {
-                    b.HasOne("HundFit.Models.Exercise", "Exercise")
-                        .WithMany("TrainingExercises")
+                    b.HasOne("HundFit.Data.Models.Exercise", "Exercise")
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HundFit.Models.Training", "Training")
-                        .WithMany("TrainingExercises")
+                    b.HasOne("HundFit.Data.Models.Training", "Training")
+                        .WithMany()
                         .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -319,29 +311,6 @@ namespace HundFit.Migrations
                     b.Navigation("Exercise");
 
                     b.Navigation("Training");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Exercise", b =>
-                {
-                    b.Navigation("TrainingExercises");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Instructor", b =>
-                {
-                    b.Navigation("Trainings");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Plan", b =>
-                {
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("HundFit.Models.Training", b =>
-                {
-                    b.Navigation("Student")
-                        .IsRequired();
-
-                    b.Navigation("TrainingExercises");
                 });
 #pragma warning restore 612, 618
         }

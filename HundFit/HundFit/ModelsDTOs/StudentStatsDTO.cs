@@ -1,12 +1,11 @@
-﻿namespace HundFit.Models;
+﻿namespace HundFit.ModelsDTOs;
 
-public class PhysicalAssessmentDTO
+public class StudentStatsDTO
 {
-    public Guid Id { get; set; }
     public Guid StudentId { get; set; }
     public Guid InstructorId { get; set; }
     public DateTime PhysicalAssessmentDate { get; set; }
     public float FatBody { get; set; }
     public float LeanMass { get; set; }
-    public float ActualWeight { get; set; }
+    public float CurrentWeight { get; set; }
 }
