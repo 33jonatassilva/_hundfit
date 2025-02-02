@@ -31,10 +31,17 @@ public class TrainingRepository : ITrainingRepository
         return await _context.Trainings.ToListAsync();
     }
 
-
+    
     public async Task<Training> GetByIdAsync(Guid id)
     {
-        return await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public async Task<Training> GetTrainingsWithExercisesAsync(Guid id)
+    {
+        return await _context.Trainings
+            .Include(t => t.Exercises) 
+            .FirstOrDefaultAsync(t => t.Id == id);
     }
 
 

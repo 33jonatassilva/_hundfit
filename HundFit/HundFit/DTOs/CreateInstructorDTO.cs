@@ -1,8 +1,8 @@
 ﻿using HundFit.Data.Models.Enums;
 
-namespace HundFit.ModelsDTOs;
+namespace HundFit.DTOs;
 
-public class InstructorDTO
+public class CreateInstructorDTO
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

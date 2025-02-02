@@ -1,7 +1,10 @@
-﻿using HundFit.Data.Models;
-using HundFit.ModelsDTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using Azure.Core;
+using HundFit.Data.Models;
+using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -13,15 +16,20 @@ namespace HundFit.Controllers;
 
 public class TrainingController :ControllerBase
 {
+    
     private readonly ITrainingRepository _repository;
+    private readonly IExerciseRepository _exerciseRepository;
 
-    public TrainingController(ITrainingRepository repository)
+    public TrainingController(ITrainingRepository repository, IExerciseRepository exerciseRepository)
     {
         _repository = repository;
+        _exerciseRepository = exerciseRepository;
     }
     
-        
-        
+    
+    
+    
+    
     [HttpPost("/training/")]
     public async Task<IActionResult> CreateTrainingAsync([FromBody] TrainingDTO trainingDto)
     {
@@ -42,9 +50,6 @@ public class TrainingController :ControllerBase
     }
     
     
-    
-
-
 
     [HttpGet("/training/")]
     public async Task<IActionResult> GetTrainingAsync([FromQuery] Guid? id)
@@ -60,6 +65,25 @@ public class TrainingController :ControllerBase
         var trainings = await _repository.GetAllAsync();
         return Ok(trainings);
     }
+    
+    
+    [HttpGet("exercises/")]
+    public async Task<IActionResult> GetExercisesByTrainingId([FromQuery, Required] Guid id)
+    {
+        
+        var training = await _repository.GetTrainingsWithExercisesAsync(id);
+        
+        var exercises = training.Exercises.Select(e => new ExerciseDTO
+        {
+            Name = e.Name,
+            Description = e.Description,
+            Series = e.Series,
+            RepetitionsPerSeries = e.RepetitionsPerSeries
+        }).ToList();
+
+        return Ok(exercises);
+    }
+
     
     
     
@@ -88,71 +112,68 @@ public class TrainingController :ControllerBase
     }
 
 
-    /*[HttpPut("/exercise/{trainingId:guid}")]
-    public async Task<IActionResult> AddExerciseToTrainingAsync([FromRoute] Guid trainingId, [FromBody] ExerciseDTO exerciseDto)
+    [HttpPut("/training/exercise/asign")]
+    public async Task<IActionResult> AddExerciseToTrainingAsync([FromQuery, Required] Guid trainingId, [FromQuery, Required] Guid exerciseId)
     {
-        
-        var training = await _repository.GetByIdAsync(trainingId);
-        var exercise = new Exercise
-        {
-            Name = exerciseDto.Name,
-            Description = exerciseDto.Description,
-            Series = exerciseDto.Series,
-            RepetitionsPerSeries = exerciseDto.RepetitionsPerSeries,
-            Load = exerciseDto.Load,
-            Training = new List<Training>()
-        };
-        
-        
-       
-       training.Exercises.Add(exercise);
-       await _repository.UpdateAsync(training);
-       return Ok(exercise);
-    }*/
-    
-    
-    
-    
-    [HttpPut("/exercise/{trainingId:guid}")]
-    public async Task<IActionResult> AddExerciseToTrainingAsync([FromRoute] Guid trainingId, [FromBody] ExerciseDTO exerciseDto)
-    {
-        // Buscar o treinamento no repositório
         var training = await _repository.GetByIdAsync(trainingId);
 
-        // Se não encontrar, retorna 404
+        var exercise = await _exerciseRepository.GetByIdAsync(exerciseId);
+        
+        //training.Exercises = new List<Exercise>();
+        
+        training.Exercises.Add(exercise);
+        
+        await _repository.UpdateAsync(training);
+        return Ok(training);
+       
+    }
+    
+    
+    
+    [HttpPost("/training/exercise/add")]
+    public async Task<IActionResult> AddExerciseToTrainingAsync(Guid id, [FromBody] CreateExerciseDTO exerciseDto)
+    {
+        var training = await _repository.GetByIdAsync(id);
+        
         if (training == null)
         {
             return NotFound("Treinamento não encontrado.");
         }
 
-        // Inicializar a coleção se for nula
-        if (training.Exercises == null)
-        {
-            training.Exercises = new List<Exercise>();
-        }
+        training.Exercises ??= new List<Exercise>();
 
-        // Criar um novo exercício
         var exercise = new Exercise
         {
+            Id = Guid.NewGuid(),
             Name = exerciseDto.Name,
             Description = exerciseDto.Description,
             Series = exerciseDto.Series,
-            RepetitionsPerSeries = exerciseDto.RepetitionsPerSeries,
-            Load = exerciseDto.Load,
-            Training = new List<Training> { training }  // Correção
+            RepetitionsPerSeries = exerciseDto.RepetitionsPerSeries
         };
 
-        // Adicionar o exercício ao treinamento
         training.Exercises.Add(exercise);
+        //await _repository.UpdateAsync(training);
+        await _exerciseRepository.CreateAsync(exercise);
 
-        // Atualizar o treinamento no banco de dados
-        await _repository.UpdateAsync(training);
+        var response = new ResponseTrainingDTO
+        {
+            Id = training.Id,
+            Name = training.Name,
+            Description = training.Description,
+            DurationInMinutes = training.DurationInMinutes,
+            Exercises = training.Exercises.Select(e => new ExerciseDTO
+            {
+                Name = e.Name,
+                Description = e.Description,
+                Series = e.Series,
+                RepetitionsPerSeries = e.RepetitionsPerSeries
+            }).ToList()
+        };
 
-        // Retornar resposta de sucesso
-        return Ok(exercise);
+        return Ok(response);
+
     }
-
-
+    
 
 
     [HttpDelete("/training/{id:guid}")]

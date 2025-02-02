@@ -20,7 +20,7 @@ public class StudentStats
     
 
     [Required]
-    public DateTime PhysicalAssessmentDate { get; set; }
+    public DateTime PhysicalAssessmentDate { get; set; } = DateTime.Today;
     [Required]
     public float FatBody { get; set; }
     [Required]

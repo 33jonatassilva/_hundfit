@@ -25,7 +25,7 @@ public class Student
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string Address { get; set; }
-    public DateTime RegistrationDate { get; set; }
+    public DateTime RegistrationDate { get; set; } = DateTime.Now;
     
     
     public virtual ICollection<StudentStats> StudentStats { get; set; }

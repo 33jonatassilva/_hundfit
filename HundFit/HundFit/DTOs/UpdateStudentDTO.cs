@@ -1,6 +1,6 @@
-﻿namespace HundFit.ModelsDTOs;
+﻿namespace HundFit.DTOs;
 
-public class StudentDTO
+public class UpdateStudentDTO
 {
     public Guid? PlanId { get; set; }
     public Guid? InstructorId { get; set; }
@@ -11,5 +11,5 @@ public class StudentDTO
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string Address { get; set; }
-    public DateTime RegistrationDate { get; set; }
+
 }

@@ -1,6 +1,6 @@
 ﻿using HundFit.Data.Models;
+using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
-using HundFit.ModelsDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -28,7 +28,6 @@ public class StudentController :ControllerBase
 
         var student = new Student
         {
-            Id = Guid.NewGuid(),
             PlanId = studentDto.PlanId,
             InstructorId = studentDto.InstructorId,
             TrainingId = studentDto.TrainingId,
@@ -37,8 +36,7 @@ public class StudentController :ControllerBase
             BirthDate = studentDto.BirthDate,
             Email = studentDto.Email,
             PhoneNumber = studentDto.PhoneNumber,
-            Address = studentDto.Address,
-            RegistrationDate = studentDto.RegistrationDate,
+            Address = studentDto.Address
         };
         
         await _repository.CreateAsync(student);
@@ -106,20 +104,24 @@ public class StudentController :ControllerBase
     
 
 
-    /*[HttpPut("/students/{id:guid}")]
-    public IActionResult Updatestudent(Guid id, [FromBody] student student)
+    [HttpPut("/students/{id:guid}")]
+    public async Task<IActionResult> UpdateStudentAsync(Guid id, [FromBody] UpdateStudentDTO studentDto)
     {
-        var studentToUpdate = _repository.GetstudentById(id);
+        var student = await _repository.GetByIdAsync(id);
+        
+       student.PlanId = studentDto.PlanId;
+       student.InstructorId = studentDto.InstructorId;
+       student.TrainingId = studentDto.TrainingId;
+       student.FirstName = studentDto.FirstName;
+       student.LastName = studentDto.LastName;
+       student.BirthDate = studentDto.BirthDate;
+       student.Email = studentDto.Email;
+       student.PhoneNumber = studentDto.PhoneNumber;
+       student.Address = studentDto.Address;
 
-        studentToUpdate.Name = student.Name;
-        studentToUpdate.Description = student.Description;
-        studentToUpdate.TrainingId = student.TrainingId;
-        studentToUpdate.Load = student.Load;
-        studentToUpdate.Repetitions = student.Repetitions;
-
-        _repository.Update(studentToUpdate);
-        return Ok(studentToUpdate);
-    }*/
+        await _repository.UpdateAsync(student);
+        return Ok(student);
+    }
 
 
 

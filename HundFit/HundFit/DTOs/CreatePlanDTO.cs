@@ -1,7 +1,6 @@
-﻿
-namespace HundFit.ModelsDTOs;
+﻿namespace HundFit.DTOs;
 
-public class PlanDTO
+public class CreatePlanDTO
 {
     public string Name { get; set; }
     public float Price { get; set; }

@@ -1,5 +1,5 @@
 ﻿using HundFit.Data.Models;
-using HundFit.ModelsDTOs;
+using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,12 +23,12 @@ public class StudentStatsController : ControllerBase
 
 
         [HttpPost("/student-stats")]
-        public async Task<IActionResult> CreateStudentStatsAsync([FromBody] StudentStatsDTO studentStatsDto)
+        public async Task<IActionResult> CreateStudentStatsAsync([FromBody] CreateStudentStatsDTO studentStatsDto)
         {
-
-            var studentStats = new StudentStats
+            var studentStats = new StudentStats()
             {
-                PhysicalAssessmentDate = studentStatsDto.PhysicalAssessmentDate,
+                StudentId = studentStatsDto.StudentId,
+                InstructorId = studentStatsDto.InstructorId,
                 FatBody = studentStatsDto.FatBody,
                 LeanMass = studentStatsDto.LeanMass,
                 CurrentWeight = studentStatsDto.CurrentWeight

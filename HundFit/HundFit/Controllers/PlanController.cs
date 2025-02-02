@@ -1,5 +1,5 @@
 ﻿using HundFit.Data.Models;
-using HundFit.ModelsDTOs;
+using HundFit.DTOs;
 using HundFit.Repositories;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +25,17 @@ public class PlanController : ControllerBase
         
         
         [HttpPost("/plan")]
-        public async Task<IActionResult> CreatePlanAsync([FromBody] Plan plan)
+        public async Task<IActionResult> CreatePlanAsync([FromBody] PlanDTO planDto)
         {
+
+            var plan = new Plan
+            {
+                Name = planDto.Name,
+                Price = planDto.Price,
+                DurationInMonths = planDto.DurationInMonths
+            };
+            
+            
             await _repository.CreateAsync(plan);
             return Ok(plan);
         }

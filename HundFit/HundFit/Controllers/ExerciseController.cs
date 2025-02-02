@@ -1,5 +1,5 @@
 ﻿using HundFit.Data.Models;
-using HundFit.ModelsDTOs;
+using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +41,9 @@ public class ExerciseController : ControllerBase
         await _repository.CreateAsync(exercise);
         return Ok(exerciseDto);
     }
+    
+    
+    
 
 
     [HttpGet("/exercises/")]

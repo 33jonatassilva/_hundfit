@@ -1,4 +1,4 @@
-﻿namespace HundFit.ModelsDTOs;
+﻿namespace HundFit.DTOs;
 
 public class TrainingExerciseDTO
 {

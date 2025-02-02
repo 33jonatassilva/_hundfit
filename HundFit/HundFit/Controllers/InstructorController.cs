@@ -1,4 +1,5 @@
 ﻿using HundFit.Data.Models;
+using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,8 +22,18 @@ public class InstructorController : ControllerBase
 
 
     [HttpPost("/instructor")]
-    public async Task<IActionResult> CreateInstructorAsync([FromBody] Instructor instructor)
+    public async Task<IActionResult> CreateInstructorAsync([FromBody] CreateInstructorDTO instructorDto)
     {
+
+        var instructor = new Instructor
+        {
+            FirstName = instructorDto.FirstName,
+            LastName = instructorDto.LastName,
+            Email = instructorDto.Email,
+            PhoneNumber = instructorDto.PhoneNumber,
+            SpecialtyEnum = instructorDto.SpecialtyEnum
+        };
+        
         await _repository.CreateAsync(instructor);
         return Ok(instructor);
     }
@@ -56,19 +67,18 @@ public class InstructorController : ControllerBase
 
 
     [HttpPut("/Instructors/{id:guid}")]
-    public async Task<IActionResult> UpdateInstructorAsync(Guid id, [FromBody] Instructor instructor)
+    public async Task<IActionResult> UpdateInstructorAsync(Guid id, [FromBody] UpdateInstructorDTO instructorDto)
     {
-        var instructorToUpdate = await _repository.GetByIdAsync(id);
+        var instructor = await _repository.GetByIdAsync(id);
+        
+        instructor.FirstName = instructorDto.FirstName;
+        instructor.LastName = instructorDto.LastName;
+        instructor.Email = instructorDto.Email;
+        instructor.PhoneNumber = instructorDto.PhoneNumber;
+        instructor.SpecialtyEnum = instructorDto.SpecialtyEnum;
 
-        instructorToUpdate.Id = instructor.Id;
-        instructorToUpdate.FirstName = instructor.FirstName;
-        instructorToUpdate.LastName = instructor.LastName;
-        instructorToUpdate.Email = instructor.Email;
-        instructorToUpdate.PhoneNumber = instructor.PhoneNumber;
-        instructorToUpdate.SpecialtyEnum = instructor.SpecialtyEnum;
-
-        await _repository.UpdateAsync(instructorToUpdate);
-        return Ok(instructorToUpdate);
+        await _repository.UpdateAsync(instructor);
+        return Ok(instructor);
     }
 
 

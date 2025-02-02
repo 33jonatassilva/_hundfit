@@ -13,6 +13,7 @@ public interface ITrainingRepository
     
     Task<Training> CreateAsync(Training training); 
     Task<IEnumerable<Training>> GetAllAsync();
+    Task<Training> GetTrainingsWithExercisesAsync(Guid trainingId);
     Task<Training> GetByIdAsync(Guid id);
     Task<Training> UpdateAsync(Training training);
     Task<Training> DeleteAsync(Guid id);
