@@ -18,29 +18,68 @@ public class ExerciseRepository : IExerciseRepository
     
     public async Task<Exercise> CreateAsync(Exercise exercise)
     {
-        await _context.Exercises.AddAsync(exercise);
-        await _context.SaveChangesAsync();
-        return exercise;
+        try
+        {
+            await _context.Exercises.AddAsync(exercise);
+            await _context.SaveChangesAsync();
+            return exercise;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<IEnumerable<Exercise>> GetAllAsync()
     {
-        return await _context.Exercises.ToListAsync();
+        try
+        {
+            return await _context.Exercises.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Exercise> GetByIdAsync(Guid id)
     {
-        return await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var exercise = await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (exercise == null)
+            {
+                throw new KeyNotFoundException("Exercise not found");
+            }
+            
+            return exercise;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Exercise> UpdateAsync(Exercise exercise)
     {
-        var updatedExercise = _context.Update(exercise).Entity;
-        await _context.SaveChangesAsync();
-        return updatedExercise;
+        try
+        {
+            var updatedExercise = _context.Update(exercise).Entity;
+            await _context.SaveChangesAsync();
+            return updatedExercise;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 

@@ -7,7 +7,7 @@ namespace HundFit.Repositories;
 
 public class StudentRepository : IStudentRepository
 {
-    public readonly AppDbContext _context;
+    private readonly AppDbContext _context;
 
 
     public StudentRepository(AppDbContext context)
@@ -19,29 +19,65 @@ public class StudentRepository : IStudentRepository
 
     public async Task<Student> CreateAsync(Student student)
     {
-        await _context.Students.AddAsync(student);
-        await _context.SaveChangesAsync();
-        return student;
+        try
+        {
+            await _context.Students.AddAsync(student);
+            await _context.SaveChangesAsync();
+            return student;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<IEnumerable<Student>>GetAllAsync()
     {
-        return await _context.Students.ToListAsync();
+        try
+        {
+            return await _context.Students.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Student> GetByIdAsync(Guid id)
     {
-        return await _context.Students.FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (student == null) throw new KeyNotFoundException("Student not found");
+            
+            return student;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Student> UpdateAsync(Student student)
     {
-        _context.Update(student);
-        await _context.SaveChangesAsync();
-        return student;
+        try
+        {
+            _context.Update(student);
+            await _context.SaveChangesAsync();
+            return student;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
@@ -51,10 +87,9 @@ public class StudentRepository : IStudentRepository
         try
         {
             var student = await _context.Students.FirstOrDefaultAsync(x => x.Id == id);
-            if (student == null)
-            {
-                throw new KeyNotFoundException("Student not found");
-            }
+            
+            if (student == null) throw new KeyNotFoundException("Student not found");
+            
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync(); 

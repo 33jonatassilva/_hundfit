@@ -17,31 +17,68 @@ public class StudentStatsRepository : IStudentStatsRepository
     
     public async Task<StudentStats> CreateAsync(StudentStats studentStats)
     {
-        await _context.StudentStats.AddAsync(studentStats);
-        await _context.SaveChangesAsync();
-        return studentStats;
+        try
+        {
+            await _context.StudentStats.AddAsync(studentStats);
+            await _context.SaveChangesAsync();
+            return studentStats;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<IEnumerable<StudentStats>> GetAllAsync()
     {
-        return await _context.StudentStats.ToListAsync();
-        
+        try
+        {
+            return await _context.StudentStats.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<StudentStats> GetByIdAsync(Guid id)
     {
-        return await _context.StudentStats.FirstOrDefaultAsync(p => p.Id == id);
+        
+        try
+        {
+            var studentStats = await _context.StudentStats.FirstOrDefaultAsync(x => x.Id == id);
+            if (studentStats == null)
+            {
+                throw new KeyNotFoundException("StudentStats not found");
+            }
+
+            return studentStats;
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error Search StudentStats: {e.Message}", e);
+        }
         
     }
 
 
     public async Task<StudentStats> UpdateAsync(StudentStats studentStats)
     {
-        _context.StudentStats.Update(studentStats);
-        await _context.SaveChangesAsync();
-        return studentStats;
+        try
+        {
+            _context.StudentStats.Update(studentStats);
+            await _context.SaveChangesAsync();
+            return studentStats;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 

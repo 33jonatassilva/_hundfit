@@ -20,28 +20,73 @@ public class TrainingRepository : ITrainingRepository
 
     public async Task<Training> CreateAsync(Training training)
     {
-        await _context.Trainings.AddAsync(training);
-        await _context.SaveChangesAsync();
-        return training;
+        try
+        {
+            await _context.Trainings.AddAsync(training);
+            await _context.SaveChangesAsync();
+            return training;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<IEnumerable<Training>> GetAllAsync()
     {
-        return await _context.Trainings.ToListAsync();
+        try
+        {
+            return await _context.Trainings.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     
     public async Task<Training> GetByIdAsync(Guid id)
     {
-        return await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
+        
+        try
+        {
+            var training = await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (training == null)
+            {
+                throw new KeyNotFoundException("Training not found");
+            }
+
+            return training;
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error Search Training: {e.Message}", e);
+        }
     }
 
     public async Task<Training> GetByIdWithExercisesAsync(Guid id)
     {
-        return await _context.Trainings
-            .Include(t => t.Exercises) 
-            .FirstOrDefaultAsync(t => t.Id == id);
+        try
+        {
+            var trainings = await _context.Trainings
+                .Include(t => t.Exercises)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            
+            if (trainings == null)
+                throw new KeyNotFoundException("Trainings not found");
+            
+            return trainings;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     
     public async Task<IEnumerable<Training>> GetTrainingsForInstructorIdAsync(Guid instructorId)
@@ -52,9 +97,16 @@ public class TrainingRepository : ITrainingRepository
 
     public async Task<Training> UpdateAsync(Training training)
     {
-        _context.Trainings.Update(training);
-        await _context.SaveChangesAsync();
-        return training;
+        try
+        {
+            _context.Trainings.Update(training);
+            await _context.SaveChangesAsync();
+            return training;
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error Updating Training: {e.Message}", e);
+        }
     }
 
 
@@ -63,6 +115,7 @@ public class TrainingRepository : ITrainingRepository
         try
         {
             var training = await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
+            
             if (training == null)
             {
                 throw new KeyNotFoundException("Training not found");

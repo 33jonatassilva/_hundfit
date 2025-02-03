@@ -44,8 +44,6 @@ public class ExerciseController : ControllerBase
     
     
     
-
-
     [HttpGet("/exercises/")]
     public async Task<IActionResult> GetExerciseAsync([FromQuery] Guid? id)
     {

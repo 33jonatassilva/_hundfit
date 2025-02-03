@@ -19,38 +19,86 @@ public class PlanRepository : IPlanRepository
 
     public async Task<Plan> CreateAsync(Plan plan)
     {
-        await _context.Plans.AddAsync(plan);
-        await _context.SaveChangesAsync();
-        return plan;
+        try
+        {
+            await _context.Plans.AddAsync(plan);
+            await _context.SaveChangesAsync();
+            return plan;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<IEnumerable<Plan>> GetAllAsync()
     {
-        return await _context.Plans.ToListAsync();
+        try
+        {
+            return await _context.Plans.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Plan> GetByIdAsync(Guid id)
     {
-        return await _context.Plans.FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var plan = await _context.Plans.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (plan == null) throw new KeyNotFoundException("Plan not found");
+            
+            return plan;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
     public async Task<Plan> GetByIdWithStudentsAsync(Guid id)
     {
-        return await _context.Plans
-            .Include(p => p.Students)
-            .FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var plans = await _context.Plans
+                .Include(p => p.Students)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (plans == null) throw new KeyNotFoundException("Plans not found");
+            
+            return plans;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 
 
     public async Task<Plan> UpdateAsync(Plan plan)
     {
-        _context.Plans.Update(plan);
-        await _context.SaveChangesAsync();
-        return plan;
+        try
+        {
+            _context.Plans.Update(plan);
+            await _context.SaveChangesAsync();
+            return plan;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 

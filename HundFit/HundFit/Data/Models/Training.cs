@@ -19,6 +19,7 @@ public class Training
     public string Name { get; set; }
     [Required, MaxLength(2500)]
     public string Description { get; set; }
+    
     [Required]
     public int DurationInMinutes { get; set; }
     
