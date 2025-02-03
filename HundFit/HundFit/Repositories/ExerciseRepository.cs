@@ -44,14 +44,32 @@ public class ExerciseRepository : IExerciseRepository
     }
 
 
-    public async Task<Exercise> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        var exercise = await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
+        
+        try
+        {
+            var exercise = await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
+            if (exercise == null)
+            {
+                throw new KeyNotFoundException("Exercise not found");
+            }
+
+            _context.Exercises.Remove(exercise);
+            await _context.SaveChangesAsync(); 
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error deleting exercise: {e.Message}", e);
+        }
+        
+        /*var exercise = await _context.Exercises.FirstOrDefaultAsync(x => x.Id == id);
         _context.Remove(exercise);
         await _context.SaveChangesAsync();
-        return exercise;
+        return exercise;*/
+
     }
-    
-    
-    
+
+
+
 }

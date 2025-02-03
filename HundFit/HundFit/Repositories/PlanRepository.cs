@@ -37,6 +37,14 @@ public class PlanRepository : IPlanRepository
     }
 
 
+    public async Task<Plan> GetByIdWithStudentsAsync(Guid id)
+    {
+        return await _context.Plans
+            .Include(p => p.Students)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+
 
     public async Task<Plan> UpdateAsync(Plan plan)
     {
@@ -46,11 +54,31 @@ public class PlanRepository : IPlanRepository
     }
 
 
-    public async Task<Plan> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        var plan = await _context.Plans.FirstOrDefaultAsync(x => x.Id == id);
-        _context.Plans.Remove(plan);
-        await _context.SaveChangesAsync();
-        return plan;
+        
+        try
+        {
+            var plan = await _context.Plans.FirstOrDefaultAsync(x => x.Id == id);
+            if (plan == null)
+            {
+                throw new KeyNotFoundException("Plan not found");
+            }
+
+            _context.Plans.Remove(plan);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error deleting plan: {e.Message}", e);
+        }
+        
+        
+        /*
+      var plan = await _context.Plans.FirstOrDefaultAsync(x => x.Id == id);
+      _context.Plans.Remove(plan);
+      await _context.SaveChangesAsync();
+      return plan;
+      */
     }
 }

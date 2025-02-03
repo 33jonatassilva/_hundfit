@@ -37,11 +37,16 @@ public class TrainingRepository : ITrainingRepository
         return await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public async Task<Training> GetTrainingsWithExercisesAsync(Guid id)
+    public async Task<Training> GetByIdWithExercisesAsync(Guid id)
     {
         return await _context.Trainings
             .Include(t => t.Exercises) 
             .FirstOrDefaultAsync(t => t.Id == id);
+    }
+    
+    public async Task<IEnumerable<Training>> GetTrainingsForInstructorIdAsync(Guid instructorId)
+    {
+        return await _context.Trainings.Where(x => x.InstructorId == instructorId).ToListAsync();
     }
 
 
@@ -53,16 +58,32 @@ public class TrainingRepository : ITrainingRepository
     }
 
 
-    public async Task<Training> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        var training = await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var training = await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
+            if (training == null)
+            {
+                throw new KeyNotFoundException("Training not found");
+            }
+
+            _context.Trainings.Remove(training);
+            await _context.SaveChangesAsync(); 
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error deleting Training: {e.Message}", e);
+        }
+        
+        
+        /*var training = await _context.Trainings.FirstOrDefaultAsync(x => x.Id == id);
         _context.Trainings.Remove(training);
         await _context.SaveChangesAsync();
-        return training;
+        return training;*/
+
+
     }
 
-    public async Task<IEnumerable<Training>> GetTrainingsForInstructorIdAsync(Guid instructorId)
-    {
-        return await _context.Trainings.Where(x => x.InstructorId == instructorId).ToListAsync();
-    }
+   
 }

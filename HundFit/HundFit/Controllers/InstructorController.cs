@@ -1,4 +1,5 @@
-﻿using HundFit.Data.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using HundFit.Data.Models;
 using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -63,10 +64,34 @@ public class InstructorController : ControllerBase
         var instructor = await _repository.GetByIdAsync(id);
         return Ok(instructor);
     }
+
+
+    [HttpGet("/instructor/students")]
+    public async Task<IActionResult> GetStudentsByInstructorIdAsync([FromQuery, Required] Guid id)
+    {
+        var instructor = await _repository.GetByIdWithStudentsAsync(id);
+        
+        var students = instructor.Students.Select(s => new StudentDTO()
+        {
+            PlanId = s.PlanId,
+            InstructorId = s.InstructorId,
+            TrainingId = s.TrainingId,
+            FirstName = s.FirstName,
+            LastName = s.LastName,
+            BirthDate = s.BirthDate,
+            Email = s.Email,
+            PhoneNumber = s.PhoneNumber,
+            Address = s.Address,
+            RegistrationDate = s.RegistrationDate
+            
+        }).ToList();
+        
+        return Ok(students);
+    }
     
 
 
-    [HttpPut("/Instructors/{id:guid}")]
+    [HttpPut("/instructor/{id:guid}")]
     public async Task<IActionResult> UpdateInstructorAsync(Guid id, [FromBody] UpdateInstructorDTO instructorDto)
     {
         var instructor = await _repository.GetByIdAsync(id);
@@ -84,11 +109,18 @@ public class InstructorController : ControllerBase
 
 
     [HttpDelete("/instructors/{id:guid}")]
-    public IActionResult DeleteInstructorByIdAsync(Guid id)
+    public async Task<IActionResult> DeleteInstructorByIdAsync(Guid id)
     {
-        var instructor = _repository.GetByIdAsync(id);
-        _repository.DeleteAsync(id);
-        return Ok(instructor);
+        var instructor = await _repository.GetByIdAsync(id);
+        
+        if (instructor == null)
+        {
+            return NotFound("Instructor not found");
+        }
+        
+        await _repository.DeleteAsync(id); 
+        return NoContent(); 
     }
+
 
 }

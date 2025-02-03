@@ -1,4 +1,5 @@
-﻿using HundFit.Data.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using HundFit.Data.Models;
 using HundFit.DTOs;
 using HundFit.Repositories;
 using HundFit.Repositories.Interfaces;
@@ -63,6 +64,31 @@ public class PlanController : ControllerBase
         {
             var plan = await _repository.GetByIdAsync(id);
             return Ok(plan);
+        }
+
+
+        [HttpGet("/plan/students")]
+
+        public async Task<IActionResult> GetPlanStudentsAsync([FromQuery, Required] Guid id)
+        {
+            var plan = await _repository.GetByIdWithStudentsAsync(id);
+            
+            var students = plan.Students.Select(s => new StudentDTO
+                {
+                    PlanId = s.PlanId,
+                    InstructorId = s.InstructorId,
+                    TrainingId = s.TrainingId,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    BirthDate = s.BirthDate,
+                    Email = s.Email,
+                    PhoneNumber = s.PhoneNumber,
+                    Address = s.Address,
+                    RegistrationDate = s.RegistrationDate
+                }
+                ).ToList();
+            
+            return Ok(students);
         }
     
 

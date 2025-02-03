@@ -45,12 +45,33 @@ public class StudentStatsRepository : IStudentStatsRepository
     }
 
 
-    public async Task<StudentStats> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        var studentStats = await _context.StudentStats.FirstOrDefaultAsync(x => x.Id == id);
+
+        
+        try
+        {
+            var studentStats = await _context.StudentStats.FirstOrDefaultAsync(x => x.Id == id);
+            if (studentStats == null)
+            {
+                throw new KeyNotFoundException("StudentStats not found");
+            }
+
+            _context.StudentStats.Remove(studentStats);
+            await _context.SaveChangesAsync(); 
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error deleting StudentStats: {e.Message}", e);
+        }
+        
+        /*var studentStats = await _context.StudentStats.FirstOrDefaultAsync(x => x.Id == id);
         _context.StudentStats.Remove(studentStats);
         await _context.SaveChangesAsync();
-        return studentStats;
+        return studentStats;*/
+
+
+        
     }
     
     
