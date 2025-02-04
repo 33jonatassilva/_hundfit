@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Azure.Core;
 using HundFit.Data.Models;
 using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -53,7 +51,7 @@ public class TrainingController :ControllerBase
     [HttpPost("/training/exercise/add")]
     public async Task<IActionResult> AddExerciseToTrainingAsync(Guid id, [FromBody] CreateExerciseDTO exerciseDto)
     {
-        var training = await _repository.GetByIdAsync(id);
+        var training = await _repository.GetByIdWithExercisesAsync(id);
         
         if (training == null)
         {
@@ -64,7 +62,6 @@ public class TrainingController :ControllerBase
 
         var exercise = new Exercise
         {
-            Id = Guid.NewGuid(),
             Name = exerciseDto.Name,
             Description = exerciseDto.Description,
             Series = exerciseDto.Series,
@@ -72,8 +69,8 @@ public class TrainingController :ControllerBase
         };
 
         training.Exercises.Add(exercise);
-        //await _repository.UpdateAsync(training);
-        await _exerciseRepository.CreateAsync(exercise);
+        await _repository.UpdateAsync(training);
+        //await _exerciseRepository.CreateAsync(exercise);
 
         var response = new ResponseTrainingDTO
         {

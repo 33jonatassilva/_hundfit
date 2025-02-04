@@ -100,6 +100,13 @@ public class TrainingRepository : ITrainingRepository
         try
         {
             _context.Trainings.Update(training);
+            
+            if(_context.ChangeTracker.HasChanges())
+                Console.WriteLine("Has changes!!!");
+            else
+            {
+                Console.WriteLine("No changes!!!");
+            }
             await _context.SaveChangesAsync();
             return training;
         }
