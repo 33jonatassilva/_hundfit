@@ -35,7 +35,7 @@ public class StudentStatsController : ControllerBase
             };
             
             await _repository.CreateAsync(studentStats);
-            return Ok(studentStats);
+            return Ok(studentStatsDto);
         }
 
 
@@ -90,6 +90,6 @@ public class StudentStatsController : ControllerBase
         {
             var studentStats = await _repository.GetByIdAsync(id);
             await _repository.DeleteAsync(id);
-            return Ok(studentStats);
+            return NoContent();
         }
 }

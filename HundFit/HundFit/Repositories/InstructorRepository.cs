@@ -51,7 +51,7 @@ public class InstructorRepository : IInstructorRepository
     }
 
 
-    public async Task<Instructor?> GetByIdAsync (Guid id)
+    public async Task<Instructor> GetByIdAsync (Guid id)
     {
         try
         {
@@ -68,7 +68,7 @@ public class InstructorRepository : IInstructorRepository
         }
     }
 
-    public async Task<Instructor?> GetByIdWithStudentsAsync(Guid id)
+    public async Task<Instructor> GetByIdWithStudentsAsync(Guid id)
     {
         try
         {

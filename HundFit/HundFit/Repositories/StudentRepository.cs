@@ -8,6 +8,7 @@ namespace HundFit.Repositories;
 public class StudentRepository : IStudentRepository
 {
     private readonly AppDbContext _context;
+    private IStudentRepository _studentRepositoryImplementation;
 
 
     public StudentRepository(AppDbContext context)
@@ -62,6 +63,19 @@ public class StudentRepository : IStudentRepository
             Console.WriteLine(e);
             throw;
         }
+    }
+    
+
+
+    public async Task<Student> GetByIdWithStudentStatsAsync(Guid id)
+    {
+        var student = await _context.Students
+            .Include(s => s.StudentStats)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (student == null) throw new KeyNotFoundException("Student not found");
+        
+        return student;
     }
 
 

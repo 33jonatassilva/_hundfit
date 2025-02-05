@@ -64,6 +64,7 @@ public class StudentStatsRepository : IStudentStatsRepository
         }
         
     }
+    
 
 
     public async Task<StudentStats> UpdateAsync(StudentStats studentStats)

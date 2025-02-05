@@ -91,7 +91,7 @@ public class ExerciseController : ControllerBase
     {
         var exercise = await _repository.GetByIdAsync(id);
         await _repository.DeleteAsync(id);
-        return Ok(exercise);
+        return NoContent();
     }
     
     

@@ -14,10 +14,12 @@ namespace HundFit.Controllers;
 public class InstructorController : ControllerBase
 {
     private readonly IInstructorRepository _repository;
+    private readonly IStudentRepository _studentRepository;
 
-    public InstructorController(IInstructorRepository repository)
+    public InstructorController(IInstructorRepository repository, IStudentRepository studentRepository)
     {
         _repository = repository;
+        _studentRepository = studentRepository;
     }
     
 
@@ -39,6 +41,30 @@ public class InstructorController : ControllerBase
         return Ok(instructor);
     }
 
+    [HttpPost("/instructor/add-student")]
+
+    public async Task<IActionResult> AddStudentToInstructorAsync(Guid instructorId, StudentDTO studentDto)
+    {
+        var instructor = await _repository.GetByIdWithStudentsAsync(instructorId);
+        
+        var student = new Student
+        {
+            PlanId = studentDto.PlanId,
+            InstructorId = instructor.Id,
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName,
+            Email = studentDto.Email,
+            PhoneNumber = studentDto.PhoneNumber,
+            Address = studentDto.Address,
+            RegistrationDate = DateTime.Today
+        };
+
+        instructor.Students.Add(student);
+        await _repository.UpdateAsync(instructor);
+        return Ok(instructor);
+    }
+
+    
 
 
     [HttpGet("/instructors/")]
@@ -96,6 +122,7 @@ public class InstructorController : ControllerBase
     {
         var instructor = await _repository.GetByIdAsync(id);
         
+        
         instructor.FirstName = instructorDto.FirstName;
         instructor.LastName = instructorDto.LastName;
         instructor.Email = instructorDto.Email;
@@ -106,17 +133,26 @@ public class InstructorController : ControllerBase
         return Ok(instructor);
     }
 
+    [HttpPut("/instructor/student/assign")]
+
+    public async Task<IActionResult> AssignInstructorToStudentAsync([FromQuery, Required] Guid instructorId, [FromQuery, Required] Guid studentId)
+    {
+        
+        var instructor = await _repository.GetByIdAsync(instructorId);
+        var student = await _studentRepository.GetByIdAsync(studentId);
+        
+        instructor.Students.Add(student);
+        await _repository.UpdateAsync(instructor);
+        
+        return Ok();
+    }
+
 
 
     [HttpDelete("/instructors/{id:guid}")]
     public async Task<IActionResult> DeleteInstructorByIdAsync(Guid id)
     {
         var instructor = await _repository.GetByIdAsync(id);
-        
-        if (instructor == null)
-        {
-            return NotFound("Instructor not found");
-        }
         
         await _repository.DeleteAsync(id); 
         return NoContent(); 

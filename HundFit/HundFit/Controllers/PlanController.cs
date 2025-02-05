@@ -113,7 +113,7 @@ public class PlanController : ControllerBase
         {
             var plan = await _repository.GetByIdAsync(id);
             await _repository.DeleteAsync(id);
-            return Ok(plan);
+            return NoContent();
         }
 
 

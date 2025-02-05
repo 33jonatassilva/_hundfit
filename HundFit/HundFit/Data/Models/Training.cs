@@ -10,7 +10,6 @@ public class Training
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid? InstructorId { get; set; }
-    [JsonIgnore]
     public Instructor Instructor { get; set; }
 
     

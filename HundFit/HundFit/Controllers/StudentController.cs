@@ -1,4 +1,5 @@
-﻿using HundFit.Data.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using HundFit.Data.Models;
 using HundFit.DTOs;
 using HundFit.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +21,7 @@ public class StudentController :ControllerBase
         _repository = repository;
     }
     
-        
-        
+    
     [HttpPost("/student")]
     public async Task<IActionResult> CreateStudentAsync([FromBody] StudentDTO studentDto)
     {
@@ -83,6 +83,19 @@ public class StudentController :ControllerBase
     {
         return id.HasValue ? Ok(await _repository.GetByIdAsync(id.Value)) : Ok(await _repository.GetAllAsync());
     }
+
+    [HttpGet("/student/student-stats")]
+
+    public async Task<IActionResult> GetStudentStatsAsync([FromQuery, Required] Guid id)
+    {
+        var student = await _repository.GetByIdWithStudentStatsAsync(id);
+        
+        var studentStats = student.StudentStats.Select(x => x);
+        
+        return Ok(studentStats);
+        
+
+    }
     
     
     
@@ -129,7 +142,7 @@ public class StudentController :ControllerBase
     public async Task<IActionResult> DeleteStudentByIdAsync(Guid id)
     {
         var student = _repository.GetByIdAsync(id);
-        _repository.DeleteAsync(id);
-        return Ok(student);
+        await _repository.DeleteAsync(id);
+        return NoContent();
     }
 }

@@ -69,8 +69,8 @@ public class TrainingController :ControllerBase
         };
 
         training.Exercises.Add(exercise);
-        await _repository.UpdateAsync(training);
-        //await _exerciseRepository.CreateAsync(exercise);
+        //await _repository.UpdateAsync(training);
+        await _exerciseRepository.CreateAsync(exercise);
 
         var response = new ResponseTrainingDTO
         {
@@ -157,30 +157,25 @@ public class TrainingController :ControllerBase
     [HttpPut("/training/exercise/assign")]
     public async Task<IActionResult> AddExerciseToTrainingAsync([FromQuery, Required] Guid trainingId, [FromQuery, Required] Guid exerciseId)
     {
+        
         var training = await _repository.GetByIdAsync(trainingId);
-
         var exercise = await _exerciseRepository.GetByIdAsync(exerciseId);
         
-        //training.Exercises = new List<Exercise>();
         
         training.Exercises.Add(exercise);
-        
         await _repository.UpdateAsync(training);
+        
         return Ok(training);
        
     }
-    
-    
-    
-   
     
 
 
     [HttpDelete("/training/{id:guid}")]
     public async Task<IActionResult> DeleteTrainingByIdAsync(Guid id)
     {
-        var training = _repository.GetByIdAsync(id);
-        _repository.DeleteAsync(id);
-        return Ok(training);
+        var training = await _repository.GetByIdAsync(id);
+        await _repository.DeleteAsync(id);
+        return NoContent();
     }
 }
