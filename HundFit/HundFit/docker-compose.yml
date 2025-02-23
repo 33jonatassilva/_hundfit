@@ -1,0 +1,35 @@
+﻿services:
+  api:
+    container_name: hundfit
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 4680:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on: ["hundfit-api-sql"]
+    networks:
+      hundfit-networks:
+  
+  hundfit-api-sql:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - "ACCEPT_EULA=1"
+      - "MSSQL_SA_PASSWORD=1q2w3e4r@#$"
+      - "MSSQL_PID=Developer"
+      - "MSSQL_USER=SA"
+    volumes:
+      - "hundfit-api-mssql-server:/var/opt/mssql"
+    networks:
+      hundfit-networks:
+        aliases:
+          - "sql"
+          
+
+volumes:
+  hundfit-api-mssql-server:   
+      
+networks:
+  hundfit-networks:
+    driver: bridge
