@@ -1,20 +1,22 @@
-﻿
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER $APP_UID
 WORKDIR /app
-
-
-COPY . ./
-
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
-
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-WORKDIR /runtime-app
-COPY --from=build-env /app/out .
-
-
-
 EXPOSE 8080
+EXPOSE 8081
 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src/HundFit
+COPY HundFit.csproj .
+RUN dotnet restore "HundFit.csproj"
+COPY . .
+RUN dotnet build "HundFit.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "HundFit.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "HundFit.dll"]

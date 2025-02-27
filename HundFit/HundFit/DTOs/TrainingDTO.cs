@@ -8,3 +8,20 @@ public class TrainingDTO
     public int DurationInMinutes { get; set; }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
