@@ -1,35 +1,26 @@
-﻿services:
-  api:
-    container_name: hundfit
-    build:
-      dockerfile: Dockerfile
-      context: .
+﻿
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "1q2w3e4r@#$" # Senha do SQL Server
+      ACCEPT_EULA: "Y" # Aceitar o contrato de licença
     ports:
-      - 4680:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on: ["hundfit-api-sql"]
-    networks:
-      hundfit-networks:
-  
-  hundfit-api-sql:
-    image: mcr.microsoft.com/mssql/server
-    environment:
-      - "ACCEPT_EULA=1"
-      - "MSSQL_SA_PASSWORD=1q2w3e4r@#$"
-      - "MSSQL_PID=Developer"
-      - "MSSQL_USER=SA"
+      - "1433:1433" # Expõe a porta 1433 do SQL Server
     volumes:
-      - "hundfit-api-mssql-server:/var/opt/mssql"
-    networks:
-      hundfit-networks:
-        aliases:
-          - "sql"
-          
+      - sqlserverdata:/var/opt/mssql # Persistência dos dados do SQL Server
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Expõe a API na porta 8080
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=hundfit;User ID=sa;Password=1q2w3e4r@#$;Trusted_Connection=False;TrustServerCertificate=True;
+    depends_on:
+      - sqlserver # Garante que o SQL Server seja iniciado antes da API
 
 volumes:
-  hundfit-api-mssql-server:   
-      
-networks:
-  hundfit-networks:
-    driver: bridge
+  sqlserverdata:

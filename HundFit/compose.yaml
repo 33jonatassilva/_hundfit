@@ -1,32 +1,28 @@
-﻿version: '3.8'
-
+﻿
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: api-sqlserver
     environment:
-      SA_PASSWORD : "1q2w3e4r@#$"
+      SA_PASSWORD: "1q2w3e4r@#$"
       ACCEPT_EULA: "Y"
-      MSSQL_DATABASE: "hundfit"
     ports:
       - "1433:1433"
     networks:
       - api-network
-      
-      
-    
+
   api:
     build: .
     container_name: minha-api
     depends_on:
       - api-sqlserver
     environment:
-      - ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=hundfit;User ID=sa;Password=1q2w3e4r@#$;Trusted_Connection=False; TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=hundfit;User ID=sa;Password=1q2w3e4r@#$;Trusted_Connection=False; TrustServerCertificate=True;;
     ports:
       - "8080:8080"
     networks:
-      - app-network
+      - api-network
 
 networks:
-  app-network:
+  api-network:
     driver: bridge
